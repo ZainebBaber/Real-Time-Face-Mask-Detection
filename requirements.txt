@@ -1,0 +1,9 @@
+ultralytics
+opencv-contrib-python
+fastapi 
+uvicorn 
+python-multipart 
+websockets 
+jinja2
+roboflow
+torch

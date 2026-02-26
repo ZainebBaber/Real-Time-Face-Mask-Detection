@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.log
+
+
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+face-mask-1/test
+face-mask-1/train
+face-mask-1/valid
+
+# But track the data.yaml
+!face-mask-1/data.yaml
+
+yolo26n.pt
+
+download.py
+

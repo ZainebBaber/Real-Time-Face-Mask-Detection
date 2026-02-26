@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AI Face Mask Detection</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top left, #1e293b, #0f172a);
+        }
+
+        .dashboard {
+            width: 700px;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        .title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .video-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        #feed {
+            width: 640px;
+            /* Smaller camera */
+            height: 480px;
+            /* Keep original ratio */
+            border-radius: 16px;
+            border: 2px solid #22d3ee;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+            transition: 0.3s ease;
+        }
+
+        #feed:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.7);
+        }
+
+        /* Spinner */
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55px;
+            height: 55px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top: 5px solid #22d3ee;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .status {
+            margin-top: 18px;
+            font-size: 13px;
+            color: #22d3ee;
+            letter-spacing: 0.5px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin-right: 6px;
+            border-radius: 50%;
+            background: #22d3ee;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(1.5);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <div class="title">AI Face Mask Detection</div>
+        <div class="subtitle">Real-time Detection via YOLO + FastAPI</div>
+
+        <div class="video-container">
+            <img id="feed" />
+            <div class="spinner" id="spinner"></div>
+        </div>
+
+        <div class="status">
+            <span class="status-dot"></span>
+            <span id="statusText">Connecting to AI server...</span>
+        </div>
+    </div>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:8000/ws");
+        const feed = document.getElementById("feed");
+        const spinner = document.getElementById("spinner");
+        const statusText = document.getElementById("statusText");
+
+        ws.binaryType = "arraybuffer";
+
+        ws.onopen = () => {
+            statusText.textContent = "Connected to AI Server";
+        };
+
+        ws.onmessage = (event) => {
+            const blob = new Blob([event.data], { type: "image/jpeg" });
+            const url = URL.createObjectURL(blob);
+
+            feed.src = url;
+
+            spinner.style.display = "none";
+        };
+
+        ws.onclose = () => {
+            statusText.textContent = "Connection Closed";
+            spinner.style.display = "block";
+        };
+
+        ws.onerror = () => {
+            statusText.textContent = "Connection Error";
+        };
+    </script>
+
+</body>
+
+</html>

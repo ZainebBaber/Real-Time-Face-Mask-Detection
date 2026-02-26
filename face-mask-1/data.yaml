@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['Mask', 'NoMask']
+
+roboflow:
+  workspace: randoms-workspace
+  project: face-mask-y1vsd-asecc
+  version: 1
+  license: CC BY 4.0
+  url: https://app.roboflow.com/randoms-workspace/face-mask-y1vsd-asecc/1
