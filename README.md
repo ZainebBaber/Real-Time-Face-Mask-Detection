@@ -1,6 +1,6 @@
 # Face Mask Detection using YOLO and FastAPI
 
-A real-time face mask detection project built with **Ultralytics YOLO** and **FastAPI**. Detects faces with and without masks on live video feeds, and displays bounding boxes and labels in a web browser.
+A real-time face mask detection project built with **Ultralytics YOLO** and **FastAPI**. Detects faces with and without masks from webcam feeds and streams annotated video to a web browser with alerts and AI summaries.
 
 ---
 
@@ -10,6 +10,8 @@ A real-time face mask detection project built with **Ultralytics YOLO** and **Fa
 - Real-time webcam detection with bounding boxes
 - Export models to **ONNX** or **PyTorch** for efficient inference
 - FastAPI + WebSocket backend for streaming video to frontend
+- Alerts for unmasked faces and intruder detection
+- AI summary statistics displayed in a prominent, readable UI
 - Lightweight repo (ignores large dataset images)
 
 ---
