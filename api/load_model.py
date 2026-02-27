@@ -34,6 +34,9 @@ def process_frame(frame):
     results=model(frame, imgsz=640, conf=0.5, verbose=False)
     fps=1/(time.time()-start_time)
 
+    masked_count = 0
+    unmasked_count = 0
+
     for result in results:
         boxes = result.boxes
         if boxes is not None:
@@ -44,6 +47,11 @@ def process_frame(frame):
 
                 label = CLASS_NAMES.get(cls, f"Class {cls}")
                 color = COLORS.get(cls, (255, 255, 255))
+
+                if cls == 0:
+                    masked_count += 1
+                elif cls == 1:
+                    unmasked_count += 1
 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
 
@@ -58,4 +66,4 @@ def process_frame(frame):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
     
     
-    return frame
+    return frame ,masked_count, unmasked_count

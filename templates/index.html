@@ -124,10 +124,47 @@
                 transform: scale(1);
             }
         }
+
+        #summaryBox {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+
+
+            font-size: 20px;
+            /* bigger text */
+            line-height: 1.6;
+            /* spacing between lines */
+
+            white-space: pre-line;
+            /* THIS makes lines stack vertically */
+
+            text-align: left;
+
+
+        }
+
+        #summaryBox h2 {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #summaryText {
+            white-space: pre-line;
+        }
     </style>
 </head>
 
 <body>
+
+    <audio id="alertSound">
+        <source src="/static/beep.mp3" type="audio/mpeg">
+    </audio>
 
     <div class="dashboard">
         <div class="title">AI Face Mask Detection</div>
@@ -144,11 +181,20 @@
         </div>
     </div>
 
+    <div id="summaryBox">
+        <h2>AI Summary</h2>
+        <div id="summaryText">
+            Waiting for data...
+        </div>
+    </div>
+
     <script>
         const ws = new WebSocket("ws://localhost:8000/ws");
         const feed = document.getElementById("feed");
         const spinner = document.getElementById("spinner");
         const statusText = document.getElementById("statusText");
+        const dashboard = document.querySelector(".dashboard");
+        const alertSound = document.getElementById("alertSound");
 
         ws.binaryType = "arraybuffer";
 
@@ -156,12 +202,41 @@
             statusText.textContent = "Connected to AI Server";
         };
 
+        document.body.addEventListener("click", () => {
+            document.getElementById("alertSound").play().catch(() => { });
+        }, { once: true });
+
         ws.onmessage = (event) => {
+
+            if (typeof event.data === "string") {
+
+                if (event.data === "beep") {
+                    alertSound.play();
+                }
+
+                if (event.data === "HIGH_RISK_MODE") {
+                    dashboard.style.background = "rgba(255, 0, 0, 0.3)";
+                    dashboard.style.boxShadow = "0 20px 50px rgba(255, 0, 0, 0.6)";
+                }
+
+                if (event.data === "NORMAL_MODE") {
+                    dashboard.style.background = "rgba(255, 255, 255, 0.05)";
+                    dashboard.style.boxShadow = "0 20px 50px rgba(0,0,0,0.6)";
+                }
+
+                if (event.data.startsWith("Summary")) {
+                    const summaryText = document.getElementById("summaryText");
+                    summaryText.textContent = event.data;
+                }
+
+                return;
+            }
+
+            // VIDEO FRAME
             const blob = new Blob([event.data], { type: "image/jpeg" });
             const url = URL.createObjectURL(blob);
 
             feed.src = url;
-
             spinner.style.display = "none";
         };
 
